@@ -1,0 +1,15 @@
+# Netlify secrets scanning flags any environment variable value that appears in
+# the build output. These values are public by design:
+# - The Supabase URL, project ID and publishable (anon) key are meant to ship in
+#   the client bundle (Row Level Security protects the data, not these values).
+# - ADMIN_USERNAME's value matches the site's brand name, which appears all over
+#   the UI, so it can never be kept out of the output.
+# ADMIN_PASSWORD and SUPABASE_SERVICE_ROLE_KEY are intentionally NOT listed so
+# they keep being scanned.
+[build]
+  command = "bun run build"
+  # The Nitro build writes static assets straight to dist/ (not dist/client).
+  publish = "dist"
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "ADMIN_USERNAME,SUPABASE_PROJECT_ID,SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,VITE_SUPABASE_PROJECT_ID,VITE_SUPABASE_URL,VITE_SUPABASE_PUBLISHABLE_KEY"
