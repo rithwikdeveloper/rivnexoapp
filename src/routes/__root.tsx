@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { PageLoader } from "@/components/page-loader";
 import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
@@ -73,6 +74,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
+  pendingMs: 0,
+  pendingMinMs: 450,
+  pendingComponent: PageLoader,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
