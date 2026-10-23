@@ -8,7 +8,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -96,18 +96,21 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const [starting, setStarting] = useState(true);
   useEffect(() => {
+    const timer = window.setTimeout(() => setStarting(false), 650);
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
       else queryClient.clear();
     });
-    return () => data.subscription.unsubscribe();
+    return () => { window.clearTimeout(timer); data.subscription.unsubscribe(); };
   }, [router, queryClient]);
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      {starting && <div className="fixed inset-0 z-[100] fade-in-0"><PageLoader /></div>}
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
