@@ -111,27 +111,23 @@ export const adminListUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: authData, error: authError }, { data: profiles, error: profilesError }, { data: roles, error: rolesError }, { data: dls, error: downloadsError }] = await Promise.all([
-      supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 500 }),
-      supabaseAdmin.from("profiles").select("*").limit(500),
-      supabaseAdmin.from("user_roles").select("user_id, role"),
-      supabaseAdmin.from("downloads").select("user_id"),
+    const [{ data: profiles, error: profilesError }, { data: roles, error: rolesError }, { data: dls, error: downloadsError }] = await Promise.all([
+      context.supabase.from("profiles").select("id, email, display_name, is_blocked, created_at").limit(500),
+      context.supabase.from("user_roles").select("user_id, role"),
+      context.supabase.from("downloads").select("user_id"),
     ]);
-    if (authError || profilesError || rolesError || downloadsError) {
-      throw new Error(authError?.message ?? profilesError?.message ?? rolesError?.message ?? downloadsError?.message ?? "Could not load users.");
+    if (profilesError || rolesError || downloadsError) {
+      throw new Error(profilesError?.message ?? rolesError?.message ?? downloadsError?.message ?? "Could not load users.");
     }
-    const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
-    return (authData.users ?? []).map((u) => {
-      const profile = profileById.get(u.id);
+    return (profiles ?? []).map((profile) => {
       return {
-        id: u.id,
-        email: profile?.email ?? u.email ?? null,
-        display_name: profile?.display_name ?? u.user_metadata?.display_name ?? null,
-        is_blocked: profile?.is_blocked ?? false,
-        created_at: profile?.created_at ?? u.created_at,
-        is_admin: (roles ?? []).some((r) => r.user_id === u.id && r.role === "admin"),
-        downloads: (dls ?? []).filter((d) => d.user_id === u.id).length,
+        id: profile.id,
+        email: profile.email,
+        display_name: profile.display_name,
+        is_blocked: profile.is_blocked,
+        created_at: profile.created_at,
+        is_admin: (roles ?? []).some((r) => r.user_id === profile.id && r.role === "admin"),
+        downloads: (dls ?? []).filter((d) => d.user_id === profile.id).length,
       };
     });
   });
