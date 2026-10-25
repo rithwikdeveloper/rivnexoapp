@@ -58,7 +58,10 @@ export function PwaInstallButton() {
               </div>
               <p id="install-rivnexo-title" className="mt-3 font-semibold text-foreground">Install Rivnexo</p>
               <p className="mt-1 text-sm text-muted-foreground">Add Rivnexo to your home screen for faster access.</p>
-              <Button className="mt-4 w-full" onClick={install}>Install Rivnexo</Button>
+              <div className="mt-4 flex w-full gap-2">
+                <Button className="min-w-0 flex-1" onClick={install}>Install Rivnexo</Button>
+                <Button className="min-w-0 flex-1" variant="outline" onClick={() => setShowPopup(false)}>Not now</Button>
+              </div>
             </div>
           </div>
         </div>
