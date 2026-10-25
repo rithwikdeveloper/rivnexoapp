@@ -47,7 +47,7 @@ export function PwaInstallButton() {
         <Download />
       </Button>
       {showPopup && (
-        <div className="fixed inset-x-4 bottom-4 z-[80] mx-auto max-w-md rounded-2xl border border-border bg-background p-4 shadow-2xl ring-1 ring-border sm:inset-x-auto sm:right-6 sm:left-auto">
+        <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 z-[80] box-border w-[calc(100vw-2rem)] max-w-md rounded-2xl border border-border bg-background p-4 shadow-2xl ring-1 ring-border sm:right-6 sm:left-auto sm:w-[min(28rem,calc(100vw-3rem))]">
           <div className="flex items-start gap-3">
             <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
               <Download className="size-5" />
@@ -55,7 +55,7 @@ export function PwaInstallButton() {
             <div className="min-w-0 flex-1">
               <p className="font-semibold text-foreground">Install Rivnexo</p>
               <p className="mt-1 text-sm text-muted-foreground">Add Rivnexo to your home screen for faster access.</p>
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button size="sm" onClick={install}>Install</Button>
                 <Button size="sm" variant="ghost" onClick={() => setShowPopup(false)}>Not now</Button>
               </div>
