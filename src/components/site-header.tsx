@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/hooks/use-theme";
 import { NotificationBell } from "@/components/notification-bell";
+import { PwaInstallButton } from "@/components/pwa-install-button";
 
 export function SiteHeader() {
   const { user, isAdmin } = useAuth();
@@ -37,6 +38,7 @@ export function SiteHeader() {
         </form>
         <nav className="hidden items-center gap-5 text-sm font-medium text-muted-foreground lg:flex">{links}</nav>
         <div className="ml-auto flex items-center gap-1 md:ml-0">
+          <PwaInstallButton />
           <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme">{dark ? <Sun /> : <Moon />}</Button>
           {user && <NotificationBell userId={user.id} />}
           {user ? (
