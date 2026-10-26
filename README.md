@@ -4,7 +4,7 @@ Implement exactly the screenshot and nothing else
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://rivnexo.lovable.app
+**Live app**: https://rivnexo.netlify.app
 
 ## Build with Lovable
 
