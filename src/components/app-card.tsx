@@ -39,6 +39,11 @@ export function TypeBadge({ kind }: { kind: "website" | "apk" }) {
   );
 }
 
+export function AndroidAppBadge({ linked }: { linked?: boolean }) {
+  if (!linked) return null;
+  return <span className="inline-flex items-center gap-1 rounded-md bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent"><Smartphone className="size-3" />Official Android App Available</span>;
+}
+
 export function ActionLabel({ kind }: { kind: "website" | "apk" }) {
   return kind === "apk" ? (
     <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-1.5 text-sm font-semibold text-ink-foreground"><Download className="size-3.5" />Download APK</span>
@@ -80,6 +85,7 @@ export function FeaturedCard({ app }: { app: AppRow }) {
           </div>
         </div>
         <p className="mt-3 line-clamp-2 text-sm text-pretty text-muted-foreground">{app.short_description}</p>
+        <AndroidAppBadge linked={app.kind === "website" && !!app.android_app_id} />
         <div className="mt-4 flex items-center justify-between">
           <span className="text-xs font-medium text-star">{isAdmin ? usage(app) : ""}</span>
           <ActionLabel kind={app.kind} />
@@ -102,6 +108,7 @@ export function RowCard({ app }: { app: AppRow }) {
         </div>
         <p className="truncate text-xs text-muted-foreground">{[app.developer, app.categories?.name].filter(Boolean).join(" · ")}</p>
         <p className="mt-1 line-clamp-1 text-sm text-pretty text-muted-foreground">{app.short_description}</p>
+        <AndroidAppBadge linked={app.kind === "website" && !!app.android_app_id} />
         <div className="mt-3 flex items-center justify-between">
           <span className="text-xs font-medium text-star">{isAdmin ? usage(app) : ""}</span>
           <ActionLabel kind={app.kind} />
@@ -123,6 +130,7 @@ export function CompactCard({ app }: { app: AppRow }) {
           <p className="truncate text-xs text-muted-foreground">{app.categories?.name ?? app.developer}</p>
         </div>
       </div>
+      <div className="mt-2"><AndroidAppBadge linked={app.kind === "website" && !!app.android_app_id} /></div>
       <div className="mt-4 flex items-center justify-between">
         <span className="text-xs font-medium text-star">{isAdmin ? usage(app) : ""}</span>
         <ActionLabel kind={app.kind} />

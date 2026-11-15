@@ -34,6 +34,7 @@ export type Database = {
       }
       apps: {
         Row: {
+          android_app_id: string | null
           apk_path: string | null
           approval_status: string
           banner_url: string | null
@@ -66,6 +67,7 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          android_app_id?: string | null
           apk_path?: string | null
           approval_status?: string
           banner_url?: string | null
@@ -98,6 +100,7 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          android_app_id?: string | null
           apk_path?: string | null
           approval_status?: string
           banner_url?: string | null

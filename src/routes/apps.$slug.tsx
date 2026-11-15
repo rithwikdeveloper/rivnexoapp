@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Download, ExternalLink, Heart, ShieldCheck, Star } from "lucide-react";
 import { ShareDialog } from "@/components/share-dialog";
 import { SiteLayout, EmptyState } from "@/components/site-layout";
-import { AppIcon, isVerifiedApp, TypeBadge, VerifiedBadge } from "@/components/app-card";
+import { AndroidAppBadge, AppIcon, isVerifiedApp, TypeBadge, VerifiedBadge } from "@/components/app-card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -120,7 +120,10 @@ function AppDetail() {
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               {app.kind === "website" ? (
-                user ? <Button size="lg" onClick={open}><ExternalLink />Open Website</Button> : <Button size="lg" asChild><Link to="/auth"><ExternalLink />Sign in to open</Link></Button>
+                <>
+                  {user ? <Button size="lg" onClick={open}><ExternalLink />Open Website</Button> : <Button size="lg" asChild><Link to="/auth"><ExternalLink />Sign in to open</Link></Button>}
+                  {app.android_app?.slug && <Button size="lg" variant="outline" asChild><Link to="/apps/$slug" params={{ slug: app.android_app.slug }}><Download />Download Android App</Link></Button>}
+                </>
               ) : user ? (
                 <Button size="lg" variant="ink" onClick={() => dlMut.mutate()} disabled={dlMut.isPending}><Download />{dlMut.isPending ? "Preparing…" : "Download APK"}</Button>
               ) : (
@@ -129,6 +132,7 @@ function AppDetail() {
               {user && <Button size="lg" variant="outline" onClick={() => favMut.mutate()}><Heart className={cn(isFav && "fill-destructive text-destructive")} />{isFav ? "Saved" : "Save"}</Button>}
               <ShareDialog name={app.name} />
             </div>
+            {app.kind === "website" && <div className="mt-3"><AndroidAppBadge linked={!!app.android_app_id} /></div>}
           </div>
         </div>
 

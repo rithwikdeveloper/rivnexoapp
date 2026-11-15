@@ -4,10 +4,11 @@ import type { Database } from "@/integrations/supabase/types";
 
 export type AppRow = Database["public"]["Tables"]["apps"]["Row"] & {
   categories?: { name: string; slug: string } | null;
+  android_app?: Pick<Database["public"]["Tables"]["apps"]["Row"], "id" | "name" | "slug" | "apk_path" | "approval_status" | "scan_status" | "is_published"> | null;
 };
 export type Category = Database["public"]["Tables"]["categories"]["Row"];
 
-const APP_SELECT = "*, categories(name, slug)";
+const APP_SELECT = "*, categories(name, slug), android_app:apps!apps_android_app_id_fkey(id, name, slug, apk_path, approval_status, scan_status, is_published)";
 
 export const categoriesQuery = queryOptions({
   queryKey: ["categories"],

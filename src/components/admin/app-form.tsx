@@ -40,6 +40,14 @@ export function AppForm({ initial, defaultKind }: { initial?: AppRow; defaultKin
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: cats = [] } = useQuery(categoriesQuery);
+  const { data: apkApps = [] } = useQuery({
+    queryKey: ["admin-apk-options"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("apps").select("id, name, version_name").eq("kind", "apk").order("name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
   const [kind, setKind] = useState<Kind>(initial?.kind ?? defaultKind ?? "website");
   const [f, setF] = useState({
     name: initial?.name ?? "", short_description: initial?.short_description ?? "", full_description: initial?.full_description ?? "",
@@ -50,6 +58,7 @@ export function AppForm({ initial, defaultKind }: { initial?: AppRow; defaultKin
   });
   const [icon, setIcon] = useState(initial?.icon_url ?? "");
   const [banner, setBanner] = useState(initial?.banner_url ?? "");
+  const [androidAppId, setAndroidAppId] = useState(initial?.android_app_id ?? "");
   const [shots, setShots] = useState<string[]>(initial?.screenshots ?? []);
   const [apk, setApk] = useState<{ path: string; size: number; sha: string } | null>(
     initial?.apk_path ? { path: initial.apk_path, size: initial.file_size ?? 0, sha: initial.sha256 ?? "" } : null,
@@ -101,6 +110,7 @@ export function AppForm({ initial, defaultKind }: { initial?: AppRow; defaultKin
       category_id: f.category_id || null, tags: f.tags.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 12),
       is_featured: f.is_featured, is_published: f.is_published, updated_at: new Date().toISOString(),
       website_url: kind === "website" ? f.website_url.trim() : null,
+      android_app_id: kind === "website" ? (androidAppId || null) : null,
       ...(kind === "apk" ? {
         apk_path: apk!.path, file_size: apk!.size, sha256: apk!.sha,
         min_android: f.min_android || null, release_date: f.release_date || null, changelog: f.changelog || null,
@@ -141,6 +151,14 @@ export function AppForm({ initial, defaultKind }: { initial?: AppRow; defaultKin
         </div>
         <div className={field}><Label>Tags (comma separated)</Label><Input value={f.tags} onChange={set("tags")} /></div>
         {kind === "website" && <div className={`${field} sm:col-span-2`}><Label>Website URL *</Label><Input type="url" placeholder="https://" value={f.website_url} onChange={set("website_url")} /></div>}
+        {kind === "website" && <div className={`${field} sm:col-span-2`}>
+          <Label>Official Android App</Label>
+          <select value={androidAppId} onChange={(e) => setAndroidAppId(e.target.value)} className="h-9 w-full rounded-md bg-secondary px-3 text-sm ring-1 ring-border">
+            <option value="">No Android app linked</option>
+            {apkApps.map((apk) => <option key={apk.id} value={apk.id}>{apk.name}{apk.version_name ? ` · v${apk.version_name}` : ""}</option>)}
+          </select>
+          <p className="text-xs text-muted-foreground">Link the APK listing that belongs to this website.</p>
+        </div>}
       </div>
 
       {kind === "apk" && (
